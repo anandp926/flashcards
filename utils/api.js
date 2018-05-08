@@ -3,26 +3,39 @@
  */
 import { AsyncStorage } from "react-native";
 
-const STORAGE_KEY = "flashCard:decks";
+const STORAGE_KEY = "flashCard:deck";
 
 function dummyData() {
+
     const defaultData = {
-        React: {
-            title: 'React',
-                questions: [
+        Technology: {
+            title: 'Technology',
+            questions: [
                 {
-                    question: 'What is React?',
-                    answer: 'A library for managing user interfaces'
+                    question: 'The Internet was created by a U.S. military research agency.',
+                    answer: 'True'
                 },
                 {
-                    question: 'Where do you make Ajax requests in React?',
-                    answer: 'The componentDidMount lifecycle event'
+                    question: 'The Internet and the World Wide Web are essentially the same thing.',
+                    answer: 'False'
+                },
+                {
+                    question: 'Today many aspects of human–computer interaction are influenced by older technologies.',
+                    answer: 'True'
+                },
+                {
+                    question: 'Despite its growth, the video-game industry still brings in smaller revenues than the U.S. box office.',
+                    answer: 'False'
+                },
+                {
+                    question: 'The video-game industry is unlike other media industries in that it has not seen consolidation.',
+                    answer: 'False'
                 }
             ]
         },
         JavaScript: {
             title: 'JavaScript',
-                questions: [
+            questions: [
                 {
                     question: 'What is a closure?',
                     answer: 'The combination of a function and the lexical environment within which that function was declared.'
@@ -32,18 +45,19 @@ function dummyData() {
     }
 
     AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(defaultData))
-
     return defaultData
 }
 
 export function getDecks() {
      return AsyncStorage.getItem(STORAGE_KEY,(err, result) => {
          if(result === null){
-             return{ decks: dummyData }
+             return {
+                 deck: dummyData()
+             }
          }else{
              return JSON.parse(result)
          }
-         
+
      })
 }
 
