@@ -2,6 +2,7 @@
  * Created by rozer on 5/2/2018.
  */
 import { AsyncStorage } from "react-native";
+import { addCard,  addDeck } from '../action'
 
 const STORAGE_KEY = "flashCard:deck";
 
@@ -33,12 +34,20 @@ function dummyData() {
                 }
             ]
         },
-        JavaScript: {
-            title: 'JavaScript',
+        Science: {
+            title: 'Science',
             questions: [
                 {
-                    question: 'What is a closure?',
-                    answer: 'The combination of a function and the lexical environment within which that function was declared.'
+                    question: 'Electrons are larger than molecules.',
+                    answer: 'False'
+                },
+                {
+                    question: 'Spiders have six legs',
+                    answer: 'False'
+                },
+                {
+                    question: 'Kelvin is a measure of temperature.',
+                    answer: 'True'
                 }
             ]
         }
@@ -62,22 +71,28 @@ export function getDecks() {
 }
 
 export function saveDeckTitle(deckTitle) {
-    const deckId = deckTitle
-    return AsyncStorage.mergeItem(
-        STORAGE_KEY,
-        JSON.stringify({
-            [deckId]: {
-                title: deckTitle,
-                questions: []
-            }
-        })
-    )
+    const deckId = deckTitle;
+    return dispatch => {
+        AsyncStorage.mergeItem(
+            STORAGE_KEY,
+            JSON.stringify({
+                [deckId]: {
+                    title: deckTitle,
+                    questions: []
+                }
+            })
+        );
+        dispatch(addDeck(deckTitle))
+    }
 }
 
 export function addCardToDeck(title,card) {
-    return AsyncStorage.getItem(STORAGE_KEY).then(result => {
-        const data = JSON.parse(result)
-        data[title].questions.push(card)
-        AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(data))
-    })
+    return dispatch => {
+        AsyncStorage.getItem(STORAGE_KEY).then(result => {
+            const data = JSON.parse(result)
+            data[title].questions.push(card)
+            AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(data))
+        });
+        dispatch(addCard(title,card))
+    }
 }
