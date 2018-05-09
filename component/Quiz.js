@@ -8,22 +8,36 @@ import {
     Text,
     Button, 
     TouchableOpacity, 
-    StyleSheet 
+    StyleSheet,
+    Animated
 } from 'react-native'
 import { connect } from 'react-redux'
 import { white, darkBlue, red } from '../utils/colors'
 import Result from './Result'
 import { capitalize } from '../utils/helper'
+import { 
+    setLocalNotification, 
+    clearNotification 
+} from '../utils/Notification'
 
 class Quiz extends Component {
 
+    componentDidMount(){
+        this.trans();
+        clearNotification()
+            .then(setLocalNotification)
+    }
+    
     state = {
         userScore: 0,
         next: 0,
         buttonStatus: false,
         result: false,
         answerButton: false,
-        backgroundColor: 'red'
+        showAnswer: false,
+        checkAnswerButton: true,
+        backgroundColor: 'red',
+        bounceValue: new Animated.Value(1)
     };
 
     nextQuestion = () => {
@@ -31,18 +45,49 @@ class Quiz extends Component {
             next: this.state.next + 1,
             buttonStatus: false,
             answerButton: false,
+            showAnswer: false,
+            checkAnswerButton: true,
             backgroundColor: 'red'
-        })
+        });
+        this.trans()
     };
 
+    trans = () => {
+        const { bounceValue } = this.state;
+        Animated.sequence([
+            Animated.timing(bounceValue, { duration: 200, toValue: 1.04}),
+            Animated.spring(bounceValue, { toValue:1, friction: 4})
+        ]).start()
+    };
+    
     viewResult = () => {
         this.setState({
             result: true
+        });
+    };
+    
+    showAnswer = () => {
+        this.setState({
+            showAnswer: true
         })
     };
     
     alertBox = () => {
         Alert.alert('Warning!','Please select an answer',)
+    };
+    
+    startQuiz = () => {
+        this.setState({
+            userScore: 0,
+            next: 0,
+            buttonStatus: false,
+            result: false,
+            answerButton: false,
+            showAnswer: false,
+            checkAnswerButton: true,
+            backgroundColor: 'red',
+            bounceValue: new Animated.Value(1)
+        });
     };
     
     checkAnswer = (score) =>{
@@ -53,6 +98,7 @@ class Quiz extends Component {
             this.setState({
                 buttonStatus: true,
                 answerButton: true,
+                checkAnswerButton: false,
                 backgroundColor: 'green',
                 userScore: this.state.userScore + 1
             })
@@ -60,6 +106,7 @@ class Quiz extends Component {
             this.setState({
                 buttonStatus: true,
                 answerButton: true,
+                checkAnswerButton: false,
                 backgroundColor: 'green',
                 userScore: this.state.userScore + 0
             })
@@ -111,11 +158,15 @@ class Quiz extends Component {
                     this.state.result
                     ?
                         <View>
-                            <Result score={this.state.userScore} questions={filterQuestion[0].questions.length}/>
+                            <Result 
+                                score={this.state.userScore} 
+                                questions={filterQuestion[0].questions.length}
+                                startQuiz={this.startQuiz}
+                            />
                         </View>
                     :
-                        <View style={styles.quesAns}>
-                            <Text style={[styles.ques,{color:white, textAlign: 'center'}]}>
+                        <Animated.View style={[styles.quesAns,{transform: [{scale: this.state.bounceValue}]}]}>
+                            <Text style={[styles.ques,{color:white, textAlign: 'center', }]}>
                                 {filterQuestion[0].questions[this.state.next].question}
                             </Text>
                             <View style={styles.bothButtons}>
@@ -132,8 +183,34 @@ class Quiz extends Component {
                                     />
                                 </View>
                             </View>
+                        </Animated.View>
+                }
+                {
+                    this.state.result
+                    ?
+                        <View></View>
+                    :
+                        <View style={{alignItems:'center'}}>
+                            <Button 
+                                disabled={this.state.checkAnswerButton} 
+                                title="check answer" color="green" 
+                                onPress={this.showAnswer}
+                            />
+                            {
+                                this.state.showAnswer
+                                    ?
+                                    <View style={[styles.nextButton,{backgroundColor: white, marginTop:10}]}>
+                                        <Text style={{fontWeight: 'bold', fontSize:16}}>
+                                            {filterQuestion[0].questions[this.state.next].answer}
+                                        </Text>
+                                    </View>
+                                    :
+                                    <View></View>
+                            }
                         </View>
                 }
+                
+                
             </View>
         )
     }

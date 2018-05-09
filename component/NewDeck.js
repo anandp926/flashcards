@@ -5,13 +5,14 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { white, darkBlue, yellow } from '../utils/colors'
 import { saveDeckTitle } from '../utils/api'
-import { addDeck } from '../action'
 import {
     StyleSheet,
     Text,
     View,
     TextInput,
-    TouchableOpacity
+    TouchableOpacity,
+    Alert,
+    KeyboardAvoidingView
 } from 'react-native'
 
 class NewDeck extends Component {
@@ -20,16 +21,31 @@ class NewDeck extends Component {
         super();
         this.state = {title: ''};
     }
-
-    submit() {
-        const { dispatch } = this.props;
-        dispatch(saveDeckTitle(this.state.title));
-        addDeck(this.state.title)
-    };
     
+    submit() {
+        if(this.validate()){
+            const { dispatch } = this.props;
+            this.props.saveDeckTitle(this.state.title);
+            this.props.navigation.navigate('Deck', {id: this.state.title});
+            this.resetState()
+        }else{
+            Alert.alert('Warning!','Please fill the Deck name',)
+        }
+    };
+
+    validate = () => {
+        const { title } = this.state;
+        return title !== ''
+    };
+    resetState = () => {
+        this.setState({
+            title: ''
+        })
+    };
+
     render() {
         return(
-            <View style={styles.container}>
+            <KeyboardAvoidingView behavior='padding' style={styles.container}>
                 <View style={styles.deckForm}>
                     <Text 
                         style={{color:white, fontWeight:'bold', fontSize: 25, textAlign: 'center'}}
@@ -40,7 +56,8 @@ class NewDeck extends Component {
                         <TextInput 
                             style={styles.inputText} 
                             underlineColorAndroid='transparent' 
-                            onChangeText={(title) => this.setState({title: title})} 
+                            onChangeText={(title) => this.setState({title: title})}
+                            value={this.state.title}
                         />
                     </View>
                     <TouchableOpacity 
@@ -50,7 +67,7 @@ class NewDeck extends Component {
                         <Text style={{fontWeight: 'bold', color:yellow,fontSize: 20}}>SUBMIT</Text>
                     </TouchableOpacity>
                 </View>
-            </View>
+            </KeyboardAvoidingView>
     )
     }
 }
@@ -68,7 +85,7 @@ const styles = StyleSheet.create({
         borderColor: '#757575',
         borderWidth: 2,
         borderRadius: 20,
-        height: 350,
+        height: 320,
         width: 320,
         padding: 5
     },
@@ -102,4 +119,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default connect()(NewDeck)
+export default connect(null, {saveDeckTitle})(NewDeck)

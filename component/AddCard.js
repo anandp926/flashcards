@@ -3,10 +3,17 @@
  */
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { View, Text, TextInput, Button, StyleSheet,TouchableOpacity } from 'react-native'
+import { 
+    View, 
+    Text, 
+    TextInput, 
+    Button, 
+    StyleSheet,
+    TouchableOpacity, 
+    Alert 
+} from 'react-native'
 import { yellow, darkBlue, white } from '../utils/colors'
 import { addCardToDeck } from '../utils/api'
-import { addCard }from '../action'
 
 class AddCard extends Component {
     
@@ -16,14 +23,30 @@ class AddCard extends Component {
     };
     
     submitCard = () => {
-        const { dispatch } = this.props;
-        const { title } = this.props.navigation.state.params;
-        const card = {
-            question: this.state.question,
-            answer: this.state.answer
-        };
-        dispatch(addCardToDeck(title, card))
-        addCard(title,card)
+        if(this.validate()){
+            const { dispatch } = this.props;
+            const { title } = this.props.navigation.state.params;
+            const card = {
+                question: this.state.question,
+                answer: this.state.answer
+            };
+            this.props.addCardToDeck(title, card);
+            Alert.alert('Thanks','Thank you for adding card');
+            this.resetState()
+        }else{
+            Alert.alert('Warning!','Please fill all detail and answer should be in true or false')
+        }
+    };
+
+    validate = () => {
+        const { question, answer } = this.state;
+        return question !== '' && (answer !== 'true' || answer !== 'True' || answer !== 'False' || answer !== 'false')
+    };
+    resetState = () => {
+        this.setState({
+            question: '',
+            answer: ''
+        })
     };
     
     render() {
@@ -38,12 +61,14 @@ class AddCard extends Component {
                         underlineColorAndroid= 'transparent' 
                         placeholder="Question"
                         onChangeText={(question) => this.setState({question: question})}
+                        value={this.state.question}
                     />
                     <TextInput 
                         style={styles.inputText} 
                         underlineColorAndroid= 'transparent' 
                         placeholder="Answer: true || false"
                         onChangeText={(answer) => this.setState({answer: answer})}
+                        value={this.state.answer}
                     />
                 </View>
                 <TouchableOpacity 
@@ -93,4 +118,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default connect()(AddCard)
+export default connect(null, { addCardToDeck })(AddCard)

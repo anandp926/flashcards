@@ -2,7 +2,14 @@
  * Created by rozer on 5/1/2018.
  */
 import React, { Component } from 'react'
-import { StyleSheet, Text,View, TouchableOpacity } from 'react-native'
+import {
+    StyleSheet,
+    Text,
+    View,
+    TouchableOpacity,
+    Animated,
+    FlatList
+} from 'react-native'
 import { connect } from 'react-redux'
 import { reciveDecks } from '../action'
 import { white, darkBlue } from '../utils/colors'
@@ -10,31 +17,49 @@ import { getDecks } from '../utils/api'
 
 class Decks extends Component {
 
+    state = {
+        bounce: new Animated.Value(0.95),
+        opacity: new Animated.Value(0)
+    };
+
     async componentDidMount(){
         const { dispatch } = this.props;
-       await getDecks().then((decks) => dispatch(reciveDecks(JSON.parse(decks))))
+        const { opacity, bounce } = this.state;
+        const data =  await getDecks();
+        dispatch(reciveDecks(JSON.parse(data)));
+
+        Animated.timing(opacity, {toValue: 1, duration:1000}).start();
+        Animated.sequence([
+            Animated.timing(bounce, { duration: 1000, toValue: 1.01}),
+            Animated.spring(bounce, { toValue:1, friction: 4})
+        ]).start();
     }
 
     render() {
         const { deck } = this.props;
         const deckValue = Object.values(deck);
-
+        const { bounce, opacity } = this.state;
         return (
             <View style={styles.container}>
-                {
-                    Object.values(deckValue[0]).map((decks)=>{
+                <FlatList
+                    data={Object.values(deckValue[0])}
+                    renderItem={({item: {questions, title}}) => {
                         return(
-                            <TouchableOpacity key={decks.title} onPress={() => this.props.navigation.navigate('Deck', {id: decks.title})}>
-                                <View style={styles.decks}>
-                                    <Text style={{fontSize: 30, fontWeight: 'bold'}}>{decks.title}</Text>
-                                    <Text style={styles.card}>
-                                        {decks.questions.length} {decks.questions.length > 1 ? 'cards' : 'card'}
-                                    </Text>
-                                </View>
-                            </TouchableOpacity>
+                            <View style={{alignItems:'center'}}>
+                                <TouchableOpacity onPress={() => this.props.navigation.navigate('Deck', {id: title})}>
+                                    <Animated.View style={[styles.decks,{ opacity },{transform:[{scale: bounce}]} ]}>
+                                        <Text style={{fontSize: 30, fontWeight: 'bold'}}>{title}</Text>
+                                        <Text style={styles.card}>
+                                            {questions.length} {questions.length > 1 ? 'cards' : 'card'}
+                                        </Text>
+                                    </Animated.View>
+                                </TouchableOpacity>
+                            </View>
+                                    
                         )
-                    })
-                }
+                    }}
+                    keyExtractor={item=> item.title}
+                />
             </View>
 
         );
@@ -44,8 +69,7 @@ class Decks extends Component {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: darkBlue,
-        alignItems:'center'
+        backgroundColor: darkBlue
     },
     decks: {
         alignItems: 'center',
