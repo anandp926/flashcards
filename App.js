@@ -13,7 +13,6 @@ import AddCard from './component/AddCard'
 import Quiz from './component/Quiz'
 import reducers from './reducer'
 import { setLocalNotification } from './utils/Notification'
-import './ReactotronConfig'
 import {white, lightBlue, darkBlue} from './utils/colors'
 
 const store = createStore(reducers, applyMiddleware(thunk));
