@@ -14,6 +14,7 @@ import { connect } from 'react-redux'
 import { reciveDecks } from '../action'
 import { white, darkBlue } from '../utils/colors'
 import { getDecks } from '../utils/api'
+import { AppLoading} from 'expo'
 
 class Decks extends Component {
 
@@ -25,9 +26,7 @@ class Decks extends Component {
     async componentDidMount(){
         const { dispatch } = this.props;
         const { opacity, bounce } = this.state;
-        const data =  await getDecks();
-        dispatch(reciveDecks(JSON.parse(data)));
-
+        await this.props.reciveDecks();
         Animated.timing(opacity, {toValue: 1, duration:1000}).start();
         Animated.sequence([
             Animated.timing(bounce, { duration: 1000, toValue: 1.01}),
@@ -102,4 +101,9 @@ function mapStateToProps (deck) {
     }
 }
 
-export default connect(mapStateToProps)(Decks)
+const mapDispatchToProps = (dispatch) =>({
+    reciveDecks: () => getDecks().then(data => dispatch(reciveDecks(JSON.parse(data))))
+
+});
+
+export default connect(mapStateToProps,mapDispatchToProps)(Decks)
