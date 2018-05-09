@@ -75,7 +75,7 @@ class AddCard extends Component {
                     style={styles.submitButton}
                     onPress={this.submitCard.bind(this)}
                 >
-                    <Text style={{fontWeight: 'bold', color:yellow,fontSize: 20}}>Submit</Text>
+                    <Text style={{fontWeight: 'bold', color:yellow,fontSize: 20}}>Add Card</Text>
                 </TouchableOpacity>
             </View>
         )

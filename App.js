@@ -4,6 +4,7 @@ import { Provider } from 'react-redux'
 import { StyleSheet, Text, View, StatusBar } from 'react-native';
 import { TabNavigator, StackNavigator } from 'react-navigation'
 import { Constants } from 'expo'
+import { FontAwesome, Ionicons } from '@expo/vector-icons'
 import thunk from 'redux-thunk'
 import Decks from './component/Decks'
 import NewDeck from './component/NewDeck'
@@ -11,6 +12,7 @@ import Deck from './component/Deck'
 import AddCard from './component/AddCard'
 import Quiz from './component/Quiz'
 import reducers from './reducer'
+import { setLocalNotification } from './utils/Notification'
 import './ReactotronConfig'
 import {white, lightBlue, darkBlue} from './utils/colors'
 
@@ -28,13 +30,15 @@ const Tabs = TabNavigator({
     Decks: {
         screen: Decks,
         navigationOptions: {
-            tabBarLabel: 'Decks'
+            tabBarLabel: 'Decks',
+            tabBarIcon: ({ tintColor }) => <Ionicons name='ios-paper-outline' size={30} color={tintColor} />
         }
     },
     NewDeck: {
         screen: NewDeck,
         navigationOptions: {
-            tabBarLabel: 'New Deck'
+            tabBarLabel: 'New Deck',
+            tabBarIcon: ({ tintColor }) => <FontAwesome name='plus-square' size={30} color={tintColor} />
         }
     }
 },
@@ -96,6 +100,10 @@ const MainNavigation = StackNavigator({
 
 export default class App extends React.Component {
 
+    componentDidMount(){
+        setLocalNotification()
+    };
+    
     render() {
         return (
             <Provider store={store}>

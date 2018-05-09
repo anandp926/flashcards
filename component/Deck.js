@@ -6,6 +6,7 @@ import { View, Alert, Text, Button, StyleSheet, TouchableOpacity } from 'react-n
 import { connect } from 'react-redux'
 import { darkBlue, white, yellow } from '../utils/colors'
 import { capitalize } from '../utils/helper'
+import { FontAwesome, Ionicons } from '@expo/vector-icons'
 
 class Deck extends Component {
 
@@ -34,7 +35,9 @@ class Deck extends Component {
                 <View style={styles.buttons}>
                     <TouchableOpacity onPress={() => this.props.navigation.navigate('AddCard',{title:id})}>
                         <View style={styles.bothButton}>
-                            <Text style={{fontWeight: 'bold', color:'#e0dede',fontSize: 20}}>Add Card</Text>
+                            <Text style={{fontWeight: 'bold', color:'#e0dede',fontSize: 20}}>
+                                Add Card <Ionicons name='ios-paper-outline' size={22} color='#e0dede' />
+                            </Text>
                         </View>
                     </TouchableOpacity>
                     <TouchableOpacity 
@@ -43,7 +46,9 @@ class Deck extends Component {
                         }
                     >
                         <View style={styles.bothButton}>
-                            <Text style={{fontWeight: 'bold', color:yellow,fontSize: 20}}>Start Quiz</Text>
+                            <Text style={{fontWeight: 'bold', color:yellow,fontSize: 20}}>
+                                Start Quiz <FontAwesome name='check-square-o' size={22} color={yellow} />
+                            </Text>
                         </View>
                     </TouchableOpacity>
                 </View>

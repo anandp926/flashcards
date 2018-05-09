@@ -64,7 +64,7 @@ class NewDeck extends Component {
                         style={styles.submitButton} 
                         onPress={this.submit.bind(this)}
                     >
-                        <Text style={{fontWeight: 'bold', color:yellow,fontSize: 20}}>SUBMIT</Text>
+                        <Text style={{fontWeight: 'bold', color:yellow,fontSize: 20}}>Add Deck</Text>
                     </TouchableOpacity>
                 </View>
             </KeyboardAvoidingView>
