@@ -31,10 +31,7 @@ class Result extends Component {
             Animated.spring(bounceValue, { toValue:1, friction: 4})
         ]).start()
     };
-
-    startQuiz = () => {
-        
-    };
+    
     
      render() {
          const spin = this.state.rotateValue.interpolate({
@@ -42,7 +39,7 @@ class Result extends Component {
              outputRange: ['0deg', '360deg']
          });
          const { score, questions } = this.props;
-         const markInPer = score > 0 ? (score*100)/questions : 0
+         const markInPer = score > 0 ? Math.round(((score*100)/questions)*100)/100 : 0
          return(
              <View style={styles.result}>
                  <AnimatedCircularProgress
@@ -75,6 +72,9 @@ class Result extends Component {
                  <TouchableOpacity style={styles.restartQuiz} onPress={this.props.startQuiz}>
                      <Text style={{fontWeight:'bold', fontSize: 18, color: white}}>Restart Quiz</Text>
                  </TouchableOpacity>
+                 <TouchableOpacity style={[styles.restartQuiz, {width: 100, height: 50, marginTop:10}]} onPress={this.props.goBack}>
+                     <Text style={{fontWeight:'bold', fontSize: 18, color: white}}>Go Back</Text>
+                 </TouchableOpacity>
              </View>
          )
      }    
@@ -91,8 +91,8 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         borderWidth: 2,
         borderColor: '#757575',
-        width: 160,
-        height: 60,
+        width: 130,
+        height: 50,
         shadowColor: 'rgba(0, 0, 0, 0.24)',
         shadowOffset: {
             width: 0,

@@ -90,6 +90,10 @@ class Quiz extends Component {
         });
     };
     
+    goback = () => {
+    this.props.navigation.goBack();
+    };
+    
     checkAnswer = (score) =>{
         const { id, deck } = this.props;
         const filterQuestion = Object.values(deck[0]).filter(deck => deck.title === id)
@@ -162,6 +166,7 @@ class Quiz extends Component {
                                 score={this.state.userScore} 
                                 questions={filterQuestion[0].questions.length}
                                 startQuiz={this.startQuiz}
+                                goBack={this.goback}
                             />
                         </View>
                     :
